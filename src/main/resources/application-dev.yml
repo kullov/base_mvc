@@ -6,3 +6,10 @@ spring:
     url: jdbc:postgresql://localhost:5432/demo_base
     username: postgres
     password: 123456
+## Mail
+  mail:
+    host: smtp.gmail.com
+    ##  587(TLS) 465(SSL) 25(AUTH)
+    port: 587
+    username: cmc.ntduc@gmail.com
+    password: Tu1den9a@
