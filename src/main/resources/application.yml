@@ -1,0 +1,10 @@
+server:
+  port: 8088
+
+spring:
+  profiles:
+    active: dev
+  datasource:
+    hikari:
+      connection-timeout: 20000
+      maximum-pool-size: 5
