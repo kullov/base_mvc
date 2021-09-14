@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import com.example.common.http.Response;
 
 import javax.validation.Valid;
+import java.util.List;
 
 /**
  * The type User controller.
@@ -37,6 +38,11 @@ public class UserController {
     public Response<Page<UserResponse>> getAllUserPaging(PagingRequest pagingRequest) {
         Pageable paging = AppUtils.getPaging(pagingRequest);
         return Response.<Page<UserResponse>>ok().data(this.userService.findAllPaging(paging));
+    }
+
+    @GetMapping("/all")
+    public Response<List<UserResponse>> getAllUsers() {
+        return Response.<List<UserResponse>>ok().data(this.userService.findAll());
     }
 
     /**

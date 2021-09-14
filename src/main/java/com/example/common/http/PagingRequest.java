@@ -1,13 +1,15 @@
 package com.example.common.http;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 /**
  * The type Paging request.
  */
 @Getter
 @Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class PagingRequest {
     /**
      * The Page.

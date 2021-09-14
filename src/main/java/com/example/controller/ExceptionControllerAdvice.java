@@ -1,5 +1,6 @@
 package com.example.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -18,12 +19,8 @@ import java.util.Map;
  * The type Exception controller advice.
  */
 @RestControllerAdvice
+@Slf4j
 public class ExceptionControllerAdvice {
-
-    /**
-     * The Logger.
-     */
-    private final Logger logger = LoggerFactory.getLogger(ExceptionControllerAdvice.class);
 
     /**
      * Handle runtime exception response.
@@ -33,7 +30,7 @@ public class ExceptionControllerAdvice {
      */
     @ExceptionHandler(BusinessException.class)
     public Response<?> handleRuntimeException(BusinessException exception) {
-        logger.error("RuntimeException", exception);
+        log.error("RuntimeException", exception);
         return Response.build()
                 .code(Response.CODE_BUSINESS)
                 .data(exception.getMessage());
@@ -50,6 +47,7 @@ public class ExceptionControllerAdvice {
     public Response<?> handleValidationExceptions(
             MethodArgumentNotValidException ex) {
         Map<String, String> errors = new HashMap<>();
+        log.error(ex.getMessage());
         ex.getBindingResult().getAllErrors().forEach((error) -> {
             String fieldName = ((FieldError) error).getField();
             String errorMessage = error.getDefaultMessage();
