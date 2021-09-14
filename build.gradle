@@ -1,6 +1,6 @@
 plugins {
     id 'java'
-    id "org.sonarqube" version "3.0"
+    id "org.sonarqube" version "3.3"
 }
 
 group 'org.ttnga'
@@ -60,9 +60,10 @@ dependencies {
 test {
     useJUnitPlatform()
 }
-sonarqube {
-    properties {
-        property "sonar.secretKeyPath", "3Rei0/uCI4dMXXnHOoP2OmbTE8gC7QPapaF4OkRScCc="
-        property "sonar.host.url", "http://localhost:9000"
-    }
-}
+//sonarqube {
+//    properties {
+//        property "sonar.projectKey", "base-mvc"
+//        property "sonar.login", "a6406a7adc6d1f83b255fa87acb9b49066d5a3cf"
+//        property "sonar.host.url", "SONAR_HOST_URL"
+//    }
+//}
