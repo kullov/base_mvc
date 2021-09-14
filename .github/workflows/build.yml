@@ -2,7 +2,7 @@ name: Build
 on:
   push:
     branches:
-      - dev-sonar
+      - staging
   pull_request:
     types: [opened, synchronize, reopened]
 jobs:
