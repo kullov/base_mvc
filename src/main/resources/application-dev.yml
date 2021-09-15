@@ -3,9 +3,9 @@ spring:
     show-sql: true
 ## PostgreSQL
   datasource:
-    url: jdbc:postgresql://127.0.0.1:5432/demo_base
-    username: postgres
-    password: 123456
+    url: jdbc:postgresql://ls-b7a5a468b8021abe51cd24707ed287cda341f4a7.cwbwjnv1r6bv.ap-southeast-1.rds.amazonaws.com:5432/demo_base
+    username: dbmasteruser
+    password: H]P!N4?Fg>pY#2#YJL1WC=HB+gwBOewt
 ## Mail
   mail:
     host: smtp.gmail.com
