@@ -59,7 +59,7 @@ public class UserServiceImpl implements UserService {
      */
     public User gettEntityById(long id) throws BusinessException {
         Optional<User> entity = this.userRepository.findById(id);
-        if (entity.isEmpty()) {
+        if (entity.isPresent()) {
             throw new BusinessException(BusinessMessage.NOT_FOUND, Response.CODE_BUSINESS);
         }
         return entity.get();
