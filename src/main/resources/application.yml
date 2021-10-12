@@ -14,3 +14,18 @@ spring:
     port: 587
     username: cmc.ntduc@gmail.com
     password: Tu1den9a@
+  jackson:
+    ## Config format date time for Jackson Object mapper
+    ## Object mapper using convert Java 8 DateTime type from/to json ISO DateTime.
+    date-format: com.fasterxml.jackson.databind.util.StdDateFormat
+    serialization:
+      write-dates-as-timestamps: false
+
+security:
+  jwt:
+    secret-key: V4q2#xY5a6cUl!&w8z9BTIFTN4&mtH4Oq#uYvw3$5lzJR&DINQTvELlEWCDQ81*9geHcDxD7
+    # 1.800.000 milliseconds = 30 minutes
+    expiration: 1800000
+  refresh-token:
+    # 90 days
+    expiration: 90

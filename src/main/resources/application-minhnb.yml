@@ -1,0 +1,23 @@
+spring:
+  ## PostgreSQL
+  datasource:
+    url: jdbc:postgresql://localhost:5432/database_dev
+    username: postgres
+    password: postgres
+
+  ## Config show log SQL queries
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+## Config log SQL queries with parameters
+logging:
+  level:
+    org:
+      hibernate:
+        type:
+          descriptor:
+            sql:
+              BasicBinder: TRACE

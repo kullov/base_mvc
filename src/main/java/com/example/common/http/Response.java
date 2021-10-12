@@ -5,7 +5,7 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 
 /**
- * The type Response.
+ * The class Response.
  *
  * @param <T> the type parameter
  */
@@ -17,21 +17,28 @@ public class Response<T> {
     /**
      * The constant CODE_SUCCESS.
      */
-    public static final Integer CODE_SUCCESS = 200;
+    public static final int CODE_SUCCESS = 200;
 
     /**
      * The constant CODE_BUSINESS.
      */
-    public static final Integer CODE_BUSINESS = 409;
+    public static final int CODE_BUSINESS = 409;
 
     /**
      * The constant CODE_VALIDATION.
      */
-    public static final Integer CODE_VALIDATION = 400;
+    public static final int CODE_VALIDATION = 400;
+
+    /**
+     * The constant CODE_UNAUTHORIZED.
+     */
+    public static final int CODE_UNAUTHORIZED = 401;
+
     /**
      * The Code.
      */
-    protected Integer code;
+    private int code;
+
     /**
      * The Data.
      */

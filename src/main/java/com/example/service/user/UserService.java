@@ -1,58 +1,89 @@
 package com.example.service.user;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import com.example.common.exception.BusinessException;
 import com.example.dto.user.UserRequest;
 import com.example.dto.user.UserResponse;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 
 /**
- * The interface User service.
+ * The interface User account service.
+ *
+ * @author MinhNB<br>
+ * <p>Mail: minhnb.it@pm.me</p>
+ * @since 2021-09-18
  */
 public interface UserService {
 
     /**
-     * Find all list.
+     * Gets all.
      *
-     * @return the list
+     * @return the all users
      */
-    public List<UserResponse> findAll();
+    List<UserResponse> getAll();
 
     /**
-     * Find all paging page.
+     * Gets all paging.
      *
      * @param pageRequest the page request
-     * @return the page
+     * @return the user paging
      */
-    public Page<UserResponse> findAllPaging(Pageable pageRequest);
+    Page<UserResponse> getAllPaging(Pageable pageRequest);
+
 
     /**
-     * Find by id user response.
+     * Gets by id.
      *
      * @param id the id
      * @return the user response
      * @throws BusinessException the business exception
      */
-    public UserResponse findById(long id) throws BusinessException;
+    UserResponse getById(int id) throws BusinessException;
 
     /**
-     * Save user user response.
+     * Gets available user by username.
      *
-     *
-     * @param userId
-     * @param dto the dto
+     * @param username the username
      * @return the user response
      * @throws BusinessException the business exception
      */
-    public UserResponse saveUser(Long userId, UserRequest dto) throws BusinessException;
+    UserResponse getByUsername(String username) throws BusinessException;
 
     /**
-     * Delete user.
+     * Create new user.
+     *
+     * @param newUser the new user
+     * @return the user response
+     * @throws BusinessException the business exception
+     */
+    UserResponse create(UserRequest newUser) throws BusinessException;
+
+    /**
+     * Update info user.
+     *
+     * @param updateUser the updated user
+     * @return the user response
+     * @throws BusinessException the business exception
+     */
+    UserResponse update(UserRequest updateUser) throws BusinessException;
+
+    /**
+     * Delete user by id.
      *
      * @param id the id
      * @throws BusinessException the business exception
      */
-    public void deleteUser(long id) throws BusinessException;
+    void delete(int id) throws BusinessException;
+
+    /**
+     * Update last login time.
+     *
+     * @param id        the user id
+     * @param loginTime the login time
+     * @throws BusinessException the business exception
+     */
+    void updateLastLoginTime(int id, OffsetDateTime loginTime) throws BusinessException;
 }

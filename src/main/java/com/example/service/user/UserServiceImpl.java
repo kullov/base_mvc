@@ -1,27 +1,35 @@
 package com.example.service.user;
 
-import com.example.entity.user.User;
-import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import com.example.common.enums.Authority;
 import com.example.common.exception.BusinessException;
 import com.example.common.exception.message.BusinessMessage;
 import com.example.common.http.Response;
 import com.example.dto.user.UserRequest;
 import com.example.dto.user.UserResponse;
+import com.example.entity.user.User;
 import com.example.repository.user.UserRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
+import java.time.OffsetDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
- * The type User service.
+ * The class User service implement.
+ *
+ * @author MinhNB<br>
+ * <p>Mail: minhnb.it@pm.me</p>
+ * @since 2021-10-09
  */
-@Service
 @RequiredArgsConstructor
+@Transactional
+@Service
 public class UserServiceImpl implements UserService {
 
     /**
@@ -30,66 +38,99 @@ public class UserServiceImpl implements UserService {
     protected final UserRepository userRepository;
 
     /**
-     * Find all list.
-     *
-     * @return the list
+     * The Password encoder.
      */
-    @Override
-    public List<UserResponse> findAll() {
-        return this.userRepository.findAll().stream().map(UserResponse::convertFromEntity).collect(Collectors.toList());
-    }
+    protected final PasswordEncoder passwordEncoder;
 
     /**
-     * Find all paging page.
+     * Gets all.
      *
-     * @param pageable the pageable
-     * @return the page
+     * @return the all users
      */
-    @Override
-    public Page<UserResponse> findAllPaging(Pageable pageable) {
-        return this.userRepository.findAll(pageable).map(UserResponse::convertFromEntity);
-    }
-
-    /**
-     * Gets entity by id.
-     *
-     * @param id the id
-     * @return the entity by id
-     * @throws BusinessException the business exception
-     */
-    public User gettEntityById(long id) throws BusinessException {
-        Optional<User> entity = this.userRepository.findById(id);
-        if (entity.isPresent()) {
-            throw new BusinessException(BusinessMessage.NOT_FOUND, Response.CODE_BUSINESS);
-        }
-        return entity.get();
-    }
-
-    /**
-     * Find by id user response.
-     *
-     * @param id the id
-     * @return the user response
-     * @throws BusinessException the business exception
-     */
-    @Override
     @Transactional(readOnly = true)
-    public UserResponse findById(long id) throws BusinessException {
-        return UserResponse.convertFromEntity(this.gettEntityById(id));
+    @Override
+    public List<UserResponse> getAll() {
+        return this.userRepository.findAll().stream().map(UserResponse::fromEntity).collect(Collectors.toList());
     }
 
     /**
-     * Save user user response.
+     * Gets all paging.
      *
+     * @param pageRequest the page request
+     * @return the user paging
+     */
+    @Transactional(readOnly = true)
+    @Override
+    public Page<UserResponse> getAllPaging(Pageable pageRequest) {
+        return null;
+    }
+
+    /**
+     * Gets by id.
      *
-     * @param userId
-     * @param dto the dto
+     * @param id the id
+     * @return the user response
+     * @throws BusinessException the business exception
+     */
+    @Transactional(readOnly = true)
+    @Override
+    public UserResponse getById(int id) throws BusinessException {
+        return this.userRepository.findById(id)
+                                  .map(UserResponse::fromEntity)
+                                  .orElseThrow(() -> new BusinessException(BusinessMessage.NOT_FOUND, Response.CODE_BUSINESS));
+    }
+
+    /**
+     * Gets available user by username.
+     *
+     * @param username the username
+     * @return the user response
+     * @throws BusinessException the business exception
+     */
+    @Transactional(readOnly = true)
+    @Override
+    public UserResponse getByUsername(String username) throws BusinessException {
+        return this.userRepository.findByUsernameAndIsDeletedFalse(username)
+                                  .map(UserResponse::fromEntity)
+                                  .orElseThrow(() -> new BusinessException(BusinessMessage.NOT_FOUND, Response.CODE_BUSINESS));
+    }
+
+    /**
+     * Create new user.
+     *
+     * @param newUser the new user
      * @return the user response
      * @throws BusinessException the business exception
      */
     @Override
-    public UserResponse saveUser(Long userId, UserRequest dto) throws BusinessException {
-        return null;
+    public UserResponse create(UserRequest newUser) throws BusinessException {
+        User newUserEntity = UserRequest.toEntity(newUser);
+
+        newUserEntity.setPassword(this.passwordEncoder.encode(newUser.getPassword()));
+        newUserEntity.setAuthority(Authority.USER);
+
+        return UserResponse.fromEntity(this.userRepository.saveAndFlush(newUserEntity));
+    }
+
+    /**
+     * Update info user.
+     *
+     * @param updateUser the updated user
+     * @return the user response
+     * @throws BusinessException the business exception
+     */
+    @Override
+    public UserResponse update(UserRequest updateUser) throws BusinessException {
+        User currentUser = this.userRepository.findById(updateUser.getId())
+                                              .orElseThrow(() -> new BusinessException(BusinessMessage.NOT_FOUND));
+
+        if (StringUtils.hasText(updateUser.getPassword())) {
+            updateUser.setPassword(this.passwordEncoder.encode(updateUser.getPassword()));
+        } else {
+            updateUser.setPassword(currentUser.getPassword());
+        }
+
+        return UserResponse.fromEntity(this.userRepository.save(UserRequest.toEntity(updateUser)));
     }
 
     /**
@@ -99,9 +140,19 @@ public class UserServiceImpl implements UserService {
      * @throws BusinessException the business exception
      */
     @Override
-    @Transactional(rollbackFor = Exception.class)
-    public void deleteUser(long id) throws BusinessException {
-        User user = this.gettEntityById(id);
-        this.userRepository.deleteById(user.getId());
+    public void delete(int id) throws BusinessException {
+        this.userRepository.deleteById(id);
+    }
+
+    /**
+     * Update last login time.
+     *
+     * @param id        the user id
+     * @param loginTime the login time
+     * @throws BusinessException the business exception
+     */
+    @Override
+    public void updateLastLoginTime(int id, OffsetDateTime loginTime) throws BusinessException {
+        this.userRepository.updateLastLoginTime(id, loginTime);
     }
 }

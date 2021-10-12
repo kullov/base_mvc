@@ -2,6 +2,7 @@ package com.example.controller.user;
 
 import com.example.common.exception.BusinessException;
 import com.example.common.http.PagingRequest;
+import com.example.common.http.Response;
 import com.example.common.utils.AppUtils;
 import com.example.dto.user.UserRequest;
 import com.example.dto.user.UserResponse;
@@ -10,7 +11,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
-import com.example.common.http.Response;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -34,15 +34,20 @@ public class UserController {
      * @param pagingRequest the paging request
      * @return the all user paging
      */
-    @GetMapping()
+    @GetMapping("/paging")
     public Response<Page<UserResponse>> getAllUserPaging(PagingRequest pagingRequest) {
         Pageable paging = AppUtils.getPaging(pagingRequest);
-        return Response.<Page<UserResponse>>ok().data(this.userService.findAllPaging(paging));
+        return Response.<Page<UserResponse>>ok().data(this.userService.getAllPaging(paging));
     }
 
-    @GetMapping("/all")
+    /**
+     * Gets all users.
+     *
+     * @return the all users
+     */
+    @GetMapping()
     public Response<List<UserResponse>> getAllUsers() {
-        return Response.<List<UserResponse>>ok().data(this.userService.findAll());
+        return Response.<List<UserResponse>>ok().data(this.userService.getAll());
     }
 
     /**
@@ -53,45 +58,47 @@ public class UserController {
      * @throws BusinessException the business exception
      */
     @GetMapping("/{id}")
-    public Response<UserResponse> getOneUser(@PathVariable Long id) throws BusinessException {
-        return Response.<UserResponse>ok().data(this.userService.findById(id));
+    public Response<UserResponse> getOneUser(@PathVariable(name = "id") Integer id) throws BusinessException {
+        return Response.<UserResponse>ok().data(this.userService.getById(id));
     }
 
     /**
-     * Create user response.
+     * Sign up new user.
      *
      * @param userRequest the user request
      * @return the response
      * @throws BusinessException the business exception
      */
     @PostMapping()
-    public Response<UserResponse> createUser(@Valid @RequestBody UserRequest userRequest) throws BusinessException {
-        return Response.<UserResponse>ok().data(this.userService.saveUser(null, userRequest));
+    public Response<UserResponse> create(@Valid @RequestBody UserRequest userRequest) throws BusinessException {
+        return Response.<UserResponse>ok().data(this.userService.create(userRequest));
     }
 
     /**
-     * Delete user response.
+     * Update user by id.
      *
      * @param userId      the user id
      * @param userRequest the user request
      * @return the response
      * @throws BusinessException the business exception
      */
-    @PutMapping("/{userId}")
-    public Response<UserResponse> deleteUser(@PathVariable Long userId, @Valid @RequestBody UserRequest userRequest) throws BusinessException {
-        return Response.<UserResponse>ok().data(this.userService.saveUser(userId, userRequest));
+    @PutMapping("/{id}")
+    public Response<UserResponse> update(@PathVariable(name = "id") Integer userId,
+                                         @Valid @RequestBody UserRequest userRequest) throws BusinessException {
+        userRequest.setId(userId);
+        return Response.<UserResponse>ok().data(this.userService.update(userRequest));
     }
 
     /**
-     * Delete user response.
+     * Delete user by id.
      *
      * @param userId the user id
      * @return the response
      * @throws BusinessException the business exception
      */
-    @DeleteMapping("/{userId}")
-    public Response<Boolean> deleteUser(@PathVariable Long userId) throws BusinessException {
-        this.userService.deleteUser(userId);
+    @DeleteMapping("/{id}")
+    public Response<Boolean> delete(@PathVariable(name = "id") Integer userId) throws BusinessException {
+        this.userService.delete(userId);
         return Response.<Boolean>ok().data(true);
     }
 }
